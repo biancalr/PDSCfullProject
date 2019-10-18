@@ -1,11 +1,7 @@
 package jsonEntities;
 
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.validation.constraints.Email;
@@ -26,7 +22,7 @@ public class UserJson implements Serializable {
 	private String name;
 
 	@NotBlank
-	@Email(message = "email not valid")
+	@Email(message = "UserJson: email not valid")
 	protected String email;
 
 //	@NotNull
@@ -34,11 +30,11 @@ public class UserJson implements Serializable {
 //	protected Date birthDay;
 
 	@NotBlank
-	@Size(min = 4, message = "Login minimun size: 4")
+	@Size(min = 4, message = "UserJson: Login minimun size: 4")
 	protected String login;
 
 	@NotBlank
-	@CPF(message = "cpf not valid")
+	@CPF(message = "UserJson: cpf not valid")
 //	@JsonbTransient // Essa annotation impede que o attributo seja inserido na resposta
 	protected String cpf;
 
@@ -47,11 +43,11 @@ public class UserJson implements Serializable {
 	protected String password;
 
 	@NotBlank
-	@Size(min = 9, message = "phoneNumber minimun size: 9")
+	@Size(min = 9, message = "UserJson: phoneNumber minimun size: 9")
 	protected String phoneNumber;
 
 //	@NotBlank
-//	protected Date birthDay;
+	protected String token;
 
 	public Long getId() {
 		return id;
@@ -134,6 +130,14 @@ public class UserJson implements Serializable {
 //		SimpleDateFormat formatted = new SimpleDateFormat("dd/MM/yyyy");
 //		return formatted.format(birthDay);
 //	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 
 	@Override
 	public String toString() {

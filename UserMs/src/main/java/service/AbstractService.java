@@ -7,8 +7,6 @@ import javax.persistence.PersistenceContext;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import entities.User;
-
 public abstract class AbstractService<T> {
 	
 	@PersistenceContext(unitName = "UserPU")
@@ -28,7 +26,5 @@ public abstract class AbstractService<T> {
 	public abstract boolean salvar(T entity);
 	
 	public abstract boolean alterar(T entity);
-	
-	public abstract User login(T entity);
 
 }

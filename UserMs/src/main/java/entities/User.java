@@ -21,13 +21,17 @@ import javax.persistence.Table;
 			query = "SELECT u FROM User u WHERE u.cpf = ?1"),
 	@NamedQuery(
 			name = User.ALL_USERS,
-			query = "Select u From User u")
+			query = "SELECT u FROM User u"),
+	@NamedQuery(
+			name = User.USER_BY_LOGIN,
+			query = "SELECT u FROM User u WHERE u.login = :login OR u.email = :login AND u.password = :password")
 })
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	public static final String USER_BY_CPF = "ClientePorCPF";
+	public static final String USER_BY_CPF = "ClienteByCPF";
 	public static final String ALL_USERS = "AllUsers";
+	public static final String USER_BY_LOGIN = "UserByLogin";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

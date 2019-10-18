@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintViolation;
 
+import coquetails.userMs.PasswordUtils;
 import entities.User;
 import jsonEntities.UserJson;
 
@@ -43,7 +44,7 @@ public class UserService extends AbstractService<UserJson> {
 //		userJson.setBirthDate(user.getBirthDay());
 		userJson.setCpf(user.getCpf());
 		userJson.setEmail(user.getEmail());
-		userJson.setPassword(user.getPassword());
+		userJson.setPassword(PasswordUtils.digestPassword(user.getPassword()));
 		userJson.setPhoneNumber(user.getPhoneNumber());
 		return userJson;
 	}
@@ -78,11 +79,10 @@ public class UserService extends AbstractService<UserJson> {
 			entityManager.persist(user);
 			entityManager.flush();
 			return true;
-		}else {
-			throw new ConstraintDeclarationException(erros.iterator().next()
-					.getMessage());
+		} else {
+			throw new ConstraintDeclarationException(erros.iterator().next().getMessage());
 		}
-		
+
 	}
 
 	@Override
@@ -101,29 +101,32 @@ public class UserService extends AbstractService<UserJson> {
 			entityManager.merge(user);
 			entityManager.flush();
 			return true;
-		}else {
-			throw new ConstraintDeclarationException(erros.iterator().next()
-					.getMessage());
+		} else {
+			throw new ConstraintDeclarationException(erros.iterator().next().getMessage());
 		}
 	}
 
 	@Override
 	public UserJson consultarPorCpf(String cpf) {
-		return entityManager.createNamedQuery(User.USER_BY_CPF, UserJson.class)
+		return entityManager.createNamedQuery(User.USER_BY_CPF, UserJson.class).getSingleResult();
+	}
+
+	public UserJson login(String login, String password) {
+		UserJson userJson = null;
+		User user = entityManager.createNamedQuery(User.USER_BY_LOGIN, User.class)
+				.setParameter("login", login)
+				.setParameter("password", password)
 				.getSingleResult();
+		userJson = new UserJson();
+		userJson.setId(user.getId());
+		userJson.setName(user.getName());
+		userJson.setLogin(user.getLogin());
+//		userJson.setBirthDate(user.getBirthDay());
+		userJson.setCpf(user.getCpf());
+		userJson.setEmail(user.getEmail());
+		userJson.setPassword(user.getPassword());
+		userJson.setPhoneNumber(user.getPhoneNumber());
+		return userJson;
 	}
-
-	@Override
-	public User login(UserJson userJson) {
-		String queryString = "select u from User where u.login = :pLogin "
-				+ "and u.password = :pPassword";
-		Query query = entityManager.createQuery(queryString);
-		query.setParameter("pLogin", userJson.getLogin());
-		query.setParameter("pPassword", userJson.getPassword());
-		User user = (User)query.getSingleResult();
-		return user;
-	}
-
-	
 
 }

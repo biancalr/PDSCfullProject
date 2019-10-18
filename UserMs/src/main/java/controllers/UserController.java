@@ -1,4 +1,4 @@
-package coquetails.userMs;
+package controllers;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -16,33 +16,32 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import jsonEntities.LoginJson;
 import jsonEntities.UserJson;
 import service.UserService;
 
 @Path("/users")
 @Produces(APPLICATION_JSON)
 @Consumes(APPLICATION_JSON)
-public class Endpoint {
-	
+public class UserController {
+
 	@EJB
 	UserService userService;
-	
+
 	@Context
 	private HttpServletRequest httpRequest;
-	
+
 	@GET
-    public Response allUsers() {
+	public Response allUsers() {
 		return Response.ok(userService.recuperarTodos()).build();
-    }
-	
+	}
+
 	@GET
-    @Path("{id}")
-    public Response userId(@PathParam("id") String id) {
-		return Response.ok(
-				userService.recuperar(
-						Long.parseLong(id))).build();
-    }
-	
+	@Path("{id}")
+	public Response userId(@PathParam("id") String id) {
+		return Response.ok(userService.recuperar(Long.parseLong(id))).build();
+	}
+
 	@DELETE
 	@Path("{id}")
 	@Consumes(APPLICATION_JSON)
@@ -52,7 +51,7 @@ public class Endpoint {
 		}
 		return Response.status(Status.BAD_REQUEST).build();
 	}
-	
+
 	@PUT
 	@Consumes(APPLICATION_JSON)
 	public Response alterar(UserJson userJson) {
@@ -61,23 +60,42 @@ public class Endpoint {
 		}
 		return Response.status(Status.BAD_REQUEST).build();
 	}
-	
+
 	@POST
 	@Consumes(APPLICATION_JSON)
 	public Response salvar(UserJson userJson) {
+//		userJson.setPassword(PasswordUtils.digestPassword(userJson.getPassword()));
 		if (userService.salvar(userJson)) {
 			return Response.ok(userJson).status(Status.CREATED).build();
 		}
 		return Response.status(Status.BAD_REQUEST).build();
 	}
-	
+
 	@POST
-	@Path("/login")
+	@Path("login")
 	@Consumes(APPLICATION_JSON)
-	public Response login(UserJson userJson) {
-		return Response.ok(
-				userService.login(userJson)).build();
+	public Response login(LoginJson loginJson) {
+		UserJson userJson = new UserJson();
+		try {
+			userJson = userService.login(loginJson.getLogin(), 
+					/*PasswordUtils.digestPassword(*/loginJson.getPassword());
+			if (loginJson.isPersistToken()) {
+				userJson.setToken(loginJson.getToken());
+				userService.alterar(userJson);
+			}
+			return Response.ok(loginJson).build();
+		} catch (Exception e) {
+			System.out.println("UserController.login()");
+			System.err.println("Problem with login");
+			return Response.status(Status.BAD_REQUEST).build();
+		}
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -113,7 +131,5 @@ public class Endpoint {
 //		}
 //		return Response.status(Status.NOT_FOUND).build();
 //	}
-	
-	
 
 }
