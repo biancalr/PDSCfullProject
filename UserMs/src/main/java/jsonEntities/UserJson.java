@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CPF;
 
-@JsonbPropertyOrder({ "id", "login", "password", "name", "email", "cpf", "phoneNumber" })
+@JsonbPropertyOrder({ "id", "login", "password", "name", "email", "cpf", "phoneNumber", "token"})
 public class UserJson implements Serializable {
 
 	private static final long serialVersionUID = 1L;
