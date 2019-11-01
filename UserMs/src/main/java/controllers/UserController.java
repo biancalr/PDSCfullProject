@@ -87,7 +87,7 @@ public class UserController {
 			return Response.ok(userJson).build();
 		} catch (Exception e) {
 			System.out.println("UserController.login()");
-			System.err.println("Problem with login");
+			System.err.println("Problem with login: " + e.getMessage());
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 	}

@@ -44,7 +44,7 @@ public class UserService extends AbstractService<UserJson> {
 //		userJson.setBirthDate(user.getBirthDay());
 		userJson.setCpf(user.getCpf());
 		userJson.setEmail(user.getEmail());
-		userJson.setPassword(PasswordUtils.digestPassword(user.getPassword()));
+		userJson.setPassword(user.getPassword());
 		userJson.setPhoneNumber(user.getPhoneNumber());
 		return userJson;
 	}
