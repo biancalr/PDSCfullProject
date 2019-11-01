@@ -24,7 +24,7 @@ import javax.persistence.Table;
 			query = "SELECT u FROM User u"),
 	@NamedQuery(
 			name = User.USER_BY_LOGIN,
-			query = "SELECT u FROM User u WHERE u.login = :login OR u.email = :login AND u.password = :password")
+			query = "SELECT u FROM User u WHERE u.login = :login AND u.password = :password")
 })
 public class User implements Serializable {
 

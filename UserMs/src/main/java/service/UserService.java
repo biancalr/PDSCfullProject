@@ -88,12 +88,14 @@ public class UserService extends AbstractService<UserJson> {
 	@Override
 	public boolean alterar(UserJson userJson) {
 		Set<ConstraintViolation<UserJson>> erros = validator.validate(userJson);
-		User user = new User();
+		User user = entityManager.find(User.class, userJson.getId());
 		user.setLogin(userJson.getLogin());
 		user.setName(userJson.getName());
 		user.setCpf(userJson.getCpf());
 		user.setEmail(userJson.getEmail());
-		user.setPassword(userJson.getPassword());
+		if (user.getPassword() != PasswordUtils.digestPassword(userJson.getPassword())) {
+			user.setPassword(PasswordUtils.digestPassword(userJson.getPassword()));
+		}
 //		user.setBirthDay(entity.getBirthDay());
 		user.setPhoneNumber(userJson.getPhoneNumber());
 		user.setId(userJson.getId());
@@ -113,10 +115,8 @@ public class UserService extends AbstractService<UserJson> {
 
 	public UserJson login(String login, String password) {
 		UserJson userJson = null;
-		User user = entityManager.createNamedQuery(User.USER_BY_LOGIN, User.class)
-				.setParameter("login", login)
-				.setParameter("password", password)
-				.getSingleResult();
+		User user = entityManager.createNamedQuery(User.USER_BY_LOGIN, User.class).setParameter("login", login)
+				.setParameter("password", password).getSingleResult();
 		userJson = new UserJson();
 		userJson.setId(user.getId());
 		userJson.setName(user.getName());

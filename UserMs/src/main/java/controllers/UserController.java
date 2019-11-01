@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import coquetails.userMs.PasswordUtils;
 import jsonEntities.LoginJson;
 import jsonEntities.UserJson;
 import service.UserService;
@@ -64,7 +65,7 @@ public class UserController {
 	@POST
 	@Consumes(APPLICATION_JSON)
 	public Response salvar(UserJson userJson) {
-//		userJson.setPassword(PasswordUtils.digestPassword(userJson.getPassword()));
+		userJson.setPassword(PasswordUtils.digestPassword(userJson.getPassword()));
 		if (userService.salvar(userJson)) {
 			return Response.ok(userJson).status(Status.CREATED).build();
 		}
@@ -78,12 +79,12 @@ public class UserController {
 		UserJson userJson = new UserJson();
 		try {
 			userJson = userService.login(loginJson.getLogin(), 
-					/*PasswordUtils.digestPassword(*/loginJson.getPassword());
+					PasswordUtils.digestPassword(loginJson.getPassword()));
 			if (loginJson.isPersistToken()) {
 				userJson.setToken(loginJson.getToken());
 				userService.alterar(userJson);
 			}
-			return Response.ok(loginJson).build();
+			return Response.ok(userJson).build();
 		} catch (Exception e) {
 			System.out.println("UserController.login()");
 			System.err.println("Problem with login");
