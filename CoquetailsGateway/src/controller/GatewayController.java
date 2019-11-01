@@ -23,7 +23,7 @@ import jsonEntities.LoginJson;
 import jsonEntities.UserJson;
 import util.JwTokenHelper;
 
-@Path("/users")
+@Path("/")
 @Produces(APPLICATION_JSON)
 @Consumes(APPLICATION_JSON)
 public class GatewayController {
@@ -31,6 +31,7 @@ public class GatewayController {
 	String endpointUser = "http://localhost:8080/userMs/api/users/";
 
 	@GET
+	@Path("/users")
 	public Response allUsers() {
 
 		Client client = ClientBuilder.newClient();
@@ -43,7 +44,7 @@ public class GatewayController {
 	}
 
 	@GET
-	@Path("{id}")
+	@Path("users/{id}")
 	public Response userId(@PathParam("id") String id) {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + id);
@@ -58,6 +59,7 @@ public class GatewayController {
 	}
 
 	@POST
+	@Path("/users")
 	public Response addUser(UserJson newUser) {
 
 		Client client = ClientBuilder.newClient();
@@ -72,7 +74,7 @@ public class GatewayController {
 	}
 
 	@DELETE
-	@Path("{id}")
+	@Path("users/{id}")
 	public Response removeUser(@PathParam("id") String id) {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + id);
@@ -89,18 +91,19 @@ public class GatewayController {
 
 		return Response.status(Status.BAD_REQUEST).build();
 	}
-	
+
 	@PUT
+	@Path("/users")
 	public Response updateUser(UserJson userJson) {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser);
-		
+
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = null;
-		
+
 		response = invocationBuilder.put(Entity.entity(userJson, MediaType.APPLICATION_JSON));
 		System.out.println(response.getStatus());
-		
+
 		if (response.getStatus() >= 200 && response.getStatus() < 400) {
 
 			return Response.ok().entity(response.readEntity(UserJson.class)).build();
@@ -111,8 +114,7 @@ public class GatewayController {
 	}
 
 	@POST
-	@Path("/login")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Path("users/login")
 	public Response loginUser(LoginJson loginJson) {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + "login");
