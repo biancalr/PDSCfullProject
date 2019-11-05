@@ -126,6 +126,7 @@ public class UserService extends AbstractService<UserJson> {
 		userJson.setEmail(user.getEmail());
 		userJson.setPassword(user.getPassword());
 		userJson.setPhoneNumber(user.getPhoneNumber());
+		userJson.setToken(user.getToken());
 		return userJson;
 	}
 

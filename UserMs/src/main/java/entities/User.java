@@ -17,14 +17,18 @@ import javax.persistence.Table;
 @Table(name = "user", catalog = "user_ms")
 @Access(AccessType.FIELD)
 @NamedQueries({
-	@NamedQuery(name = User.USER_BY_CPF,
+	@NamedQuery(
+			name = User.USER_BY_CPF,
 			query = "SELECT u FROM User u WHERE u.cpf = ?1"),
 	@NamedQuery(
 			name = User.ALL_USERS,
 			query = "SELECT u FROM User u"),
 	@NamedQuery(
 			name = User.USER_BY_LOGIN,
-			query = "SELECT u FROM User u WHERE u.login = :login AND u.password = :password")
+			query = "SELECT u FROM User u WHERE u.login = :login AND u.password = :password"),
+	@NamedQuery(
+			name = User.USER_BY_TOKEN,
+			query = "Select u From User u Where u.token = :token")
 })
 public class User implements Serializable {
 
@@ -32,6 +36,7 @@ public class User implements Serializable {
 	public static final String USER_BY_CPF = "ClienteByCPF";
 	public static final String ALL_USERS = "AllUsers";
 	public static final String USER_BY_LOGIN = "UserByLogin";
+	public static final String USER_BY_TOKEN = "UserByToken";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
