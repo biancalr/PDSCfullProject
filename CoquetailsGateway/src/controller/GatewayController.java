@@ -134,10 +134,7 @@ public class GatewayController {
 		}
 
 		response = invocationBuilder.post(Entity.entity(loginJson, MediaType.APPLICATION_JSON));
-		System.out.println("Gateway controller: ");
-		System.out.println(response.getStatus());
-
-		System.out.println(response.readEntity(String.class));
+		System.out.println("Gateway controller: " + response.getStatus());
 
 		return Response.ok(response.getEntity()).build();
 	}
