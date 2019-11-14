@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>DB</name>
+	<comment></comment>
+	<projects>
+		<project>CoquetailsGateway</project>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>user_db.sql</name>
+			<type>1</type>
+			<location>/home/bianca/pdsc/user_ms_script.sql</location>
+		</link>
+	</linkedResources>
+</projectDescription>
