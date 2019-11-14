@@ -69,6 +69,19 @@ public class User implements Serializable {
 	@Column(name = "token", nullable = true)
 	protected String token;
 
+	public User(long id, String name, String password, String cpf, String email, String login, String phoneNumber,
+			String token) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.password = password;
+		this.cpf = cpf;
+		this.email = email;
+		this.login = login;
+		this.phoneNumber = phoneNumber;
+		this.token = token;
+	}
+
 	public User() {
 		// TODO Auto-generated constructor stub
 	}

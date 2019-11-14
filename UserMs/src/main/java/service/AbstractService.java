@@ -14,17 +14,58 @@ public abstract class AbstractService<T> {
 	
 	protected Validator validator = Validation.buildDefaultValidatorFactory()
 			.getValidator();
+	/**
+	 * 
+	 * @return
+	 * @throws Exception 
+	 */
+	public abstract List<T> recuperarTodos() throws Exception;
 	
-	public abstract List<T> recuperarTodos();
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception 
+	 */
+	public abstract T recuperar(Long id) throws Exception;
 	
-	public abstract T recuperar(Long id);
+	/**
+	 * 
+	 * @param cpf
+	 * @return
+	 * @throws Exception 
+	 */
+	public abstract T consultarPorCpf(String cpf) throws Exception;
 	
-	public abstract T consultarPorCpf(String cpf);
-	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public abstract boolean remover(Long id);
 	
+	/**
+	 * 
+	 * @param entity
+	 * @return
+	 */
 	public abstract boolean salvar(T entity);
 	
-	public abstract boolean alterar(T entity);
+	/**
+	 * 
+	 * @param entity
+	 * @return
+	 */
+	public abstract boolean alterarDados(T entity);
+	
+	/**
+	 * 
+	 * @param id id do usuário
+	 * @param senhaAtual senha atual
+	 * @param novaSenha nova senha
+	 * @param confirmaSenha confirmação
+	 * @return
+	 */
+	public abstract boolean alterarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha);
 
 }

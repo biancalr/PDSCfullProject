@@ -3,6 +3,7 @@ package controllers;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Response.Status;
 
 import coquetails.userMs.PasswordUtils;
 import jsonEntities.LoginJson;
+import jsonEntities.PasswordJson;
 import jsonEntities.UserJson;
 import service.UserService;
 
@@ -34,13 +36,25 @@ public class UserController {
 
 	@GET
 	public Response allUsers() {
-		return Response.ok(userService.recuperarTodos()).build();
+		try {
+			return Response.ok(userService.recuperarTodos()).build();
+		} catch (Exception e) {
+			System.out.println("UserController.allUsers()");
+			System.err.println("Message line 44: " + e.getMessage());
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 
 	@GET
 	@Path("{id}")
 	public Response userId(@PathParam("id") String id) {
-		return Response.ok(userService.recuperar(Long.parseLong(id))).build();
+		try {
+			return Response.ok(userService.recuperar(Long.parseLong(id))).build();
+		} catch (EJBException e) {
+			System.out.println("UserController.userId()");
+			System.err.println("Message line 56: " + e.getMessage());
+			return Response.status(Status.NOT_FOUND).build();
+		}
 	}
 
 	@DELETE
@@ -55,52 +69,93 @@ public class UserController {
 
 	@PUT
 	@Consumes(APPLICATION_JSON)
-	public Response alterar(UserJson userJson) {
-		if (userService.alterar(userJson)) {
-			return Response.ok(userJson).build();
+	public Response alterarDados(UserJson userJson) {
+		System.out.println("UserController.alterarDados()");
+		try {
+			if (userService.alterarDados(userJson)) {
+				System.out.println("Message line 80: tudo certo");
+				return Response.ok(userJson).build();
+			} else {
+				System.err.println("usuário não encontrado");
+				return Response.status(Status.NOT_FOUND).build();
+			}
+		} catch (Exception e) {
+			System.err.println("Message line 87: " + e.getCause());
+			return Response.status(Status.BAD_REQUEST).build();
 		}
-		return Response.status(Status.BAD_REQUEST).build();
+	}
+
+	@PUT
+	@Path("{id}")
+	@Consumes(APPLICATION_JSON)
+	public Response alterarSenha(@PathParam("id") Long id, PasswordJson passwordJson) {
+		System.out.println("UserController.alterarSenha()");
+		if (!passwordJson.getCurrent().isEmpty() && !passwordJson.getNewPassword().isEmpty()
+				&& !passwordJson.getConfirm().isEmpty()) {
+			passwordJson.setCurrent(PasswordUtils.digestPassword(passwordJson.getCurrent()));
+			passwordJson.setNewPassword(PasswordUtils.digestPassword(passwordJson.getNewPassword()));
+			passwordJson.setConfirm(PasswordUtils.digestPassword(passwordJson.getConfirm()));
+		} else {
+			System.err.println("Campo contém valor vazio");
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		System.out.println(passwordJson.toString());
+		try {
+			if (userService.alterarSenha(id, passwordJson.getCurrent(), passwordJson.getNewPassword(),
+					passwordJson.getConfirm())) {
+				return Response.status(Status.OK).build();
+			} else {
+				System.err.println("Campos preenchidos com valores não concordantes");
+				return Response.status(Status.BAD_REQUEST).build();
+			}
+		} catch (Exception e) {
+			System.err.println("Message line 116: " + e.getCause());
+			return Response.status(Status.BAD_REQUEST).build();
+		}
 	}
 
 	@POST
 	@Consumes(APPLICATION_JSON)
 	public Response salvar(UserJson userJson) {
+		System.out.println("UserController.salvar()");
+		System.out.println("1 Create user ms: " + userJson.getLogin() + " " + userJson.getPassword());
+
 		userJson.setPassword(PasswordUtils.digestPassword(userJson.getPassword()));
-		if (userService.salvar(userJson)) {
-			return Response.ok(userJson).status(Status.CREATED).build();
+		System.out.println("2 Create user ms: " + userJson.getLogin() + " " + userJson.getPassword());
+
+		try {
+			if (userService.salvar(userJson)) {
+				System.out.println("Novo usuário salvo");
+				return Response.ok(userJson).status(Status.CREATED).build();
+			}
+			System.err.println("Problema em salvar o novo usuário");
+			return Response.status(Status.BAD_REQUEST).build();
+		} catch (Exception e) {
+			System.err.println("Message line 137: " + e.getCause());
+			return Response.status(Status.BAD_REQUEST).build();
 		}
-		return Response.status(Status.BAD_REQUEST).build();
 	}
 
 	@POST
 	@Path("login")
 	@Consumes(APPLICATION_JSON)
 	public Response login(LoginJson loginJson) {
-		UserJson userJson = new UserJson();
+		UserJson userJson;
+		System.out.println("1 Login ms: " + loginJson.getLogin() + " " + loginJson.getPassword());
 		try {
-			userJson = userService.login(loginJson.getLogin(), 
-					PasswordUtils.digestPassword(loginJson.getPassword()));
-			if (loginJson.isPersistToken()) {
-				userJson.setToken(loginJson.getToken());
-				userService.alterar(userJson);
-			}
+			userJson = userService.login(loginJson.getLogin(), PasswordUtils.digestPassword(loginJson.getPassword()));
+			System.out.println("2 Login ms: " + loginJson.getLogin() + " " + loginJson.getPassword());
+//			if (loginJson.isPersistToken()) {
+//				userJson.setToken(loginJson.getToken());
+//				//userService.alterar(userJson);
+//			}
 			return Response.ok(userJson).build();
-		} catch (Exception e) {
+		} catch (EJBException e) {
 			System.out.println("UserController.login()");
-			System.err.println("Problem with login: " + e.getMessage());
-			return Response.status(Status.BAD_REQUEST).build();
+			System.err.println("Message line 159: " + e.getMessage());
+			return Response.status(Status.NOT_FOUND).build();
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 //	@POST
 //    @Consumes(APPLICATION_JSON)

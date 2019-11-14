@@ -49,6 +49,24 @@ public class UserJson implements Serializable {
 //	@NotBlank
 	protected String token;
 
+	public UserJson(Long id, @NotBlank String name, @NotBlank @Email(message = "UserJson: email not valid") String email,
+			@NotBlank @Size(min = 4, message = "UserJson: Login minimun size: 4") String login,
+			@NotBlank @CPF(message = "UserJson: cpf not valid") String cpf, @NotBlank String password,
+			@NotBlank @Size(min = 9, message = "UserJson: phoneNumber minimun size: 9") String phoneNumber, String token) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.login = login;
+		this.cpf = cpf;
+		this.password = password;
+		this.phoneNumber = phoneNumber;
+		this.token = token;
+	}
+	public UserJson() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Long getId() {
 		return id;
 	}
