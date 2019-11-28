@@ -35,6 +35,7 @@ public class GatewayController {
 
 	@GET
 	@Path("/users")
+	@JsonTokenNeeded
 	public Response allUsers() {
 		System.out.println("GatewayController.allUsers()");
 		Client client = ClientBuilder.newClient();
@@ -72,6 +73,7 @@ public class GatewayController {
 
 	@POST
 	@Path("/users")
+	@JsonTokenNeeded
 	public Response addUser(UserJson newUser) {
 		System.out.println("GatewayController.addUser()");
 		System.out.println(newUser.getLogin() + " " + newUser.getPassword());
@@ -89,6 +91,7 @@ public class GatewayController {
 
 	@DELETE
 	@Path("users/{id}")
+	@JsonTokenNeeded
 	public Response removeUser(@PathParam("id") Long id) {
 		System.out.println("GatewayController.removeUser()");
 		Client client = ClientBuilder.newClient();
@@ -108,6 +111,7 @@ public class GatewayController {
 
 	@PUT
 	@Path("/users")
+	@JsonTokenNeeded
 	public Response updateUserData(UserJson userJson) {
 		System.out.println("GatewayController.updateUser()");
 		Client client = ClientBuilder.newClient();
@@ -129,6 +133,7 @@ public class GatewayController {
 	
 	@PUT
 	@Path("users/{id}")
+	@JsonTokenNeeded
 	public Response updateUserPassword(@PathParam("id")Long id, PasswordJson passwordJson) {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + id);
