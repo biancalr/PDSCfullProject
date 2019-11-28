@@ -12,6 +12,7 @@ import javax.validation.ConstraintDeclarationException;
 import javax.validation.ConstraintViolation;
 
 import entities.User;
+import jsonEntities.LoginJson;
 import jsonEntities.UserJson;
 
 @Stateless
@@ -65,7 +66,6 @@ public class UserService extends AbstractService<UserJson> {
 
 	@Override
 	public boolean salvar(UserJson entity) throws ConstraintDeclarationException, EntityExistsException {
-		System.out.println("Salvar user ms: " + entity.getLogin() + " " + entity.getPassword());
 		Set<ConstraintViolation<UserJson>> erros = validator.validate(entity);
 		System.out.println("erros: " + erros);
 		User user = new User();
@@ -95,7 +95,7 @@ public class UserService extends AbstractService<UserJson> {
 	}
 
 	@Override
-	public UserJson consultarPorCpf(String cpf) throws Exception {
+	public UserJson consultarPorCpf(String cpf) throws NoResultException {
 		return entityManager.createNamedQuery(User.USER_BY_CPF, UserJson.class).getSingleResult();
 	}
 
@@ -107,19 +107,29 @@ public class UserService extends AbstractService<UserJson> {
 	 * @return o objeto do usuário caso os parâmetros estejam corretos. Ou nulo caso
 	 *         haja erro
 	 */
-	public UserJson login(String login, String password) throws NoResultException {
+	public UserJson login(LoginJson loginJson) throws NoResultException {
 		User user;
 		try {
-			System.out.println("Login: " + login + " " + password);
-			user = entityManager.createNamedQuery(User.USER_BY_LOGIN, User.class).setParameter("login", login)
-					.setParameter("password", password).getSingleResult();
+			System.out.println("Login: " + loginJson.getLogin() + " " + loginJson.getPassword());
+			user = entityManager.createNamedQuery(User.USER_BY_LOGIN, User.class).setParameter("login", loginJson.getLogin())
+					.setParameter("password", loginJson.getPassword()).getSingleResult();
 		} catch (NoResultException e) {
 			System.out.println("UserService.login()");
 			System.err.println("Message line 120: " + e.getMessage());
 			throw new NoResultException("Usuario nao encontrado");
 		}
+		user.setToken(loginJson.getToken());
+		try {
+			entityManager.merge(user);
+			entityManager.flush();	
+		} catch (PersistenceException e) {
+			System.out.println("UserService.login()");
+			System.err.println("Message line 127: " + e.getMessage());
+			throw new PersistenceException(e.getCause());
+		}
+		
 		return new UserJson(user.getId(), user.getName(), user.getEmail(), user.getLogin(), user.getCpf(),
-				user.getPassword(), user.getPhoneNumber(), user.getToken());
+				user.getPassword(), user.getPhoneNumber(), loginJson.getToken());
 
 	}
 
@@ -189,7 +199,7 @@ public class UserService extends AbstractService<UserJson> {
 		} catch (PersistenceException e) {
 			System.out.println("UserService.alterarSenha()");
 			System.err.println("Message line 192: " + e.getCause());
-			throw new PersistenceException("Problema em persistir");
+			throw new PersistenceException("Problema em persistir: " + e.getCause());
 		}
 		return true;
 	}

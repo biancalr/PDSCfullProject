@@ -3,6 +3,9 @@
 	<name>CoquetailsGateway</name>
 	<comment></comment>
 	<projects>
+		<project>DB</project>
+		<project>front</project>
+		<project>WebFront</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -1,5 +1,6 @@
 package controller;
 
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import javax.ws.rs.Consumes;
@@ -20,7 +21,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import jsonEntities.LoginJson;
+import jsonEntities.PasswordJson;
 import jsonEntities.UserJson;
+import jwtConfiguration.JsonTokenNeeded;
 import util.JwTokenHelper;
 
 @Path("/")
@@ -33,27 +36,36 @@ public class GatewayController {
 	@GET
 	@Path("/users")
 	public Response allUsers() {
-
+		System.out.println("GatewayController.allUsers()");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.get();
 
+		if (response.getStatus() == 404) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+
+		System.out.println("status: " + response.getStatus());
 		return response;
 	}
 
 	@GET
 	@Path("users/{id}")
-	public Response userId(@PathParam("id") String id) {
+	@JsonTokenNeeded
+	public Response userId(@PathParam("id") Long id) {
+		System.out.println("GatewayController.userId()");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + id);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-		Response response;
-		response = invocationBuilder.get();
+		Response response = invocationBuilder.get();
 
-		System.out.println(response.getStatus());
+		System.out.println("status: " + response.getStatus());
+		if (response.getStatus() == 404) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
 
 		return response;
 	}
@@ -61,61 +73,85 @@ public class GatewayController {
 	@POST
 	@Path("/users")
 	public Response addUser(UserJson newUser) {
-
+		System.out.println("GatewayController.addUser()");
+		System.out.println(newUser.getLogin() + " " + newUser.getPassword());
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
 		Response response = invocationBuilder.post(Entity.entity(newUser, MediaType.APPLICATION_JSON));
-
-		System.out.println(response.readEntity(String.class));
-
-		return Response.ok(newUser).build();
+		
+		if (response.getStatus() == 400) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		return Response.ok(newUser).status(Status.CREATED).build();
 	}
 
 	@DELETE
 	@Path("users/{id}")
-	public Response removeUser(@PathParam("id") String id) {
+	public Response removeUser(@PathParam("id") Long id) {
+		System.out.println("GatewayController.removeUser()");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + id);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-		Response response;
-		response = invocationBuilder.delete();
+		Response response = invocationBuilder.delete();
 
 		System.out.println(response.getStatus());
 
-		if (response.getStatus() == 200) {
-			return Response.ok().status(Status.NO_CONTENT).build();
+		if (response.getStatus() == 400) {
+			return Response.status(Status.BAD_REQUEST).build();
 		}
 
-		return Response.status(Status.BAD_REQUEST).build();
+		return response;
 	}
 
 	@PUT
 	@Path("/users")
-	public Response updateUser(UserJson userJson) {
+	public Response updateUserData(UserJson userJson) {
+		System.out.println("GatewayController.updateUser()");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser);
 
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-		Response response = null;
-
-		response = invocationBuilder.put(Entity.entity(userJson, MediaType.APPLICATION_JSON));
+		Response response = invocationBuilder.put(Entity.entity(userJson, MediaType.APPLICATION_JSON));
 		System.out.println(response.getStatus());
 
-		if (response.getStatus() >= 200 && response.getStatus() < 400) {
-
-			return Response.ok().entity(response.readEntity(UserJson.class)).build();
-
+		if (response.getStatus() == 400) {
+			return Response.status(Status.BAD_REQUEST).build();
+		} else if (response.getStatus() == 404) {
+			return Response.status(Status.NOT_FOUND).build();
 		}
 
-		return Response.status(Status.BAD_REQUEST).build();
+		return Response.ok().entity(response.readEntity(UserJson.class)).build();
+
+	}
+	
+	@PUT
+	@Path("users/{id}")
+	public Response updateUserPassword(@PathParam("id")Long id, PasswordJson passwordJson) {
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client.target(endpointUser + id);
+		System.out.println(passwordJson.toString());
+		
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
+		Response response = invocationBuilder.put(Entity.entity(passwordJson, MediaType.APPLICATION_JSON));
+		
+		System.out.println(response.getStatus());
+		if (response.getStatus() == 400) {
+			return Response.status(Status.BAD_REQUEST).build();
+		} else if (response.getStatus() == 404) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
+		return response;
+		
 	}
 
 	@POST
 	@Path("users/login")
 	public Response loginUser(LoginJson loginJson) {
+		System.out.println("GatewayController.loginUser()");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client.target(endpointUser + "login");
 
@@ -132,11 +168,13 @@ public class GatewayController {
 			}
 
 		}
-
 		response = invocationBuilder.post(Entity.entity(loginJson, MediaType.APPLICATION_JSON));
-		System.out.println("Gateway controller: " + response.getStatus());
-
-		return Response.ok(response.getEntity()).build();
+		
+		if (response.getStatus() == 404) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
+		return Response.ok().header(AUTHORIZATION, "Bearer " + loginJson.getToken()).build();
 	}
 
 }
