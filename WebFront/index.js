@@ -5,7 +5,6 @@ var button = document.getElementById("buttonLogin").addEventListener(
 		'click',
 		function(e) {
 			e.preventDefault();
-			console.log("dentro do evento");
 			var login = document.getElementById("idLogin").value;
 			var senha = document.getElementById("passwordLogin").value;
 			var persistToken;
@@ -17,9 +16,8 @@ var button = document.getElementById("buttonLogin").addEventListener(
 			}
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
-				console.log("testando o onreadyStateChange");
 				if (xmlhttp.readyState == 4) {
-					console.log("readyState == 4");
+//					console.log("readyState == 4");
 					if (xmlhttp.status == 200) {
 						window.location.replace("./pages/logged.html");
 					} else {
