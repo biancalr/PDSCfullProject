@@ -7,6 +7,8 @@
 
 		<jta-data-source>jdbc/user_ms</jta-data-source>
 		<class>entities.User</class>
+		<class>entities.Address</class>
+		<class>entities.Card</class>
 	</persistence-unit>
 
 </persistence>

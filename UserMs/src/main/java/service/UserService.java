@@ -94,7 +94,6 @@ public class UserService extends AbstractService<UserJson> {
 
 	}
 
-	@Override
 	public UserJson consultarPorCpf(String cpf) throws NoResultException {
 		return entityManager.createNamedQuery(User.USER_BY_CPF, UserJson.class).getSingleResult();
 	}
@@ -171,7 +170,6 @@ public class UserService extends AbstractService<UserJson> {
 		}
 	}
 
-	@Override
 	public boolean alterarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha)
 			throws NullPointerException {
 		User user = entityManager.find(User.class, id);

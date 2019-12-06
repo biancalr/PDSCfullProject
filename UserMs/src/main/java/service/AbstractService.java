@@ -31,14 +31,6 @@ public abstract class AbstractService<T> {
 	
 	/**
 	 * 
-	 * @param cpf
-	 * @return
-	 * @throws Exception 
-	 */
-	public abstract T consultarPorCpf(String cpf) throws Exception;
-	
-	/**
-	 * 
 	 * @param id
 	 * @return
 	 */
@@ -57,15 +49,5 @@ public abstract class AbstractService<T> {
 	 * @return
 	 */
 	public abstract boolean alterarDados(T entity);
-	
-	/**
-	 * 
-	 * @param id id do usuário
-	 * @param senhaAtual senha atual
-	 * @param novaSenha nova senha
-	 * @param confirmaSenha confirmação
-	 * @return
-	 */
-	public abstract boolean alterarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha);
 
 }
