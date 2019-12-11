@@ -33,7 +33,7 @@ public class Card implements Serializable {
 	private String bandeira;
 
 	@NotBlank
-	@Column(name = "dt_Expiracao", nullable = false)
+	@Column(name = "dataExpiracao", nullable = false)
 	private String dataExpiracao;
 
 	@NotBlank
@@ -98,8 +98,18 @@ public class Card implements Serializable {
 		this.user = user;
 	}
 	
-	public void toTimeStamp(String data) {
-		this.dataExpiracao = data.toString();
+	public Card() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Card(long id, @NotBlank String bandeira, @NotBlank String dataExpiracao,
+			@NotBlank @CreditCardNumber String numero, @NotBlank String senha, @NotBlank User user) {
+		this.id = id;
+		this.bandeira = bandeira;
+		this.dataExpiracao = dataExpiracao;
+		this.numero = numero;
+		this.senha = senha;
+		this.user = user;
 	}
 
 	@Override

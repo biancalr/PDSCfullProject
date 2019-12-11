@@ -37,7 +37,14 @@ public class AddressService extends AbstractService<AddressJson> {
 	}
 
 	public AddressJson consultarPorCep(String cep) throws NoResultException {
-		return entityManager.createNamedQuery(Address.ADDRESS_BY_CEP, AddressJson.class).getSingleResult();
+		try {
+			return entityManager.createNamedQuery(Address.ADDRESS_BY_CEP, AddressJson.class).getSingleResult();
+		} catch (Exception e) {
+			System.out.println("AddressService.consultarPorCep()");
+			System.err.println("Message line 44");
+			throw new NoResultException("Not Found");
+		}
+		
 	}
 
 	@Override

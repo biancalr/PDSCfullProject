@@ -1,6 +1,9 @@
 package jsonEntities;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
@@ -26,7 +29,7 @@ public class CardJson implements Serializable{
 	private String bandeira;
 
 	@NotNull
-	private Long dataExpiracao;
+	private String dataExpiracao;
 
 	@CreditCardNumber
 	@NotBlank
@@ -39,13 +42,13 @@ public class CardJson implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public CardJson(long id, @NotBlank Long user, @NotBlank String bandeira, @NotNull Long dataExpiracao,
+	public CardJson(long id, @NotBlank Long user, @NotBlank String bandeira, @NotNull Date dataExpiracao,
 			@CreditCardNumber @NotBlank String numero, @NotBlank String senha) {
 		super();
 		this.id = id;
 		this.user = user;
 		this.bandeira = bandeira;
-		this.dataExpiracao = dataExpiracao;
+		this.dataExpiracao = fromDateToString(dataExpiracao);
 		this.numero = numero;
 		this.senha = senha;
 	}
@@ -74,11 +77,11 @@ public class CardJson implements Serializable{
 		this.bandeira = bandeira;
 	}
 
-	public Long getDataExpiracao() {
+	public String getDataExpiracao() {
 		return dataExpiracao;
 	}
 
-	public void setDataExpiracao(Long dataExpiracao) {
+	public void setDataExpiracao(String dataExpiracao) {
 		this.dataExpiracao = dataExpiracao;
 	}
 
@@ -96,6 +99,14 @@ public class CardJson implements Serializable{
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	public String fromDateToString(Date date) {
+		return date.toString();
+	}
+	
+	public Date fromStringToDate(String date) throws ParseException {
+		return new SimpleDateFormat().parse(date);
 	}
 	
 }
