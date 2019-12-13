@@ -19,6 +19,12 @@ public class ValidadorBandeira implements ConstraintValidator<ValidaBandeira, St
         this.bandeiras.add("AMEX");
         this.bandeiras.add("GOOD CARD");
         this.bandeiras.add("SODEXO");
+        this.bandeiras.add("DINERS CLUB");
+        this.bandeiras.add("DISCOVER");
+        this.bandeiras.add("EN ROUTE");
+        this.bandeiras.add("JCB");
+        this.bandeiras.add("VOYAGER");
+        this.bandeiras.add("AURA");
         
     }
 	

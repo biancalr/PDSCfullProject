@@ -139,9 +139,8 @@ public class UserController {
 		UserJson userJson;
 		try {
 			loginJson.setPassword(PasswordUtils.digestPassword(loginJson.getPassword()));
-			System.out.println("token: " + loginJson.getToken());
 			userJson = userService.login(loginJson);
-			return Response.ok(userJson).header("Access-Control-Allow-Origin", "*").build();
+			return Response.ok(userJson).build();
 		} catch (Exception e) {
 			System.out.println("UserController.login()");
 			System.err.println("Message line 148: " + e.getMessage());

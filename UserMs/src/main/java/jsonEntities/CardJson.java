@@ -9,11 +9,10 @@ import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.CreditCardNumber;
+import javax.validation.constraints.Size;
 
 import validators.ValidaBandeira;
-@JsonbPropertyOrder({ "id", "numero", "bandeira", "dataExpiracao", "user"})
+@JsonbPropertyOrder({ "id", "numero", "senha", "bandeira", "dataExpiracao", "user"})
 public class CardJson implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -21,7 +20,7 @@ public class CardJson implements Serializable{
 	@JsonbProperty("id")
 	private long id;
 
-	@NotBlank
+	@NotNull
 	private Long user;
 	
 	@NotBlank
@@ -31,7 +30,7 @@ public class CardJson implements Serializable{
 	@NotNull
 	private String dataExpiracao;
 
-	@CreditCardNumber
+	@Size(min = 16, max = 19)
 	@NotBlank
 	private String numero;
 	
@@ -43,7 +42,7 @@ public class CardJson implements Serializable{
 	}
 
 	public CardJson(long id, @NotBlank Long user, @NotBlank String bandeira, @NotNull Date dataExpiracao,
-			@CreditCardNumber @NotBlank String numero, @NotBlank String senha) {
+			@NotBlank String numero, @NotBlank String senha) {
 		super();
 		this.id = id;
 		this.user = user;
@@ -54,7 +53,7 @@ public class CardJson implements Serializable{
 	}
 
 	public CardJson(long id, @NotBlank Long user, @NotBlank String bandeira, @NotNull String dataExpiracao,
-			@CreditCardNumber @NotBlank String numero, @NotBlank String senha) {
+			@NotBlank String numero, @NotBlank String senha) {
 		super();
 		this.id = id;
 		this.user = user;

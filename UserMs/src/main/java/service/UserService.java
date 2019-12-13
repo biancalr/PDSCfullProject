@@ -25,11 +25,18 @@ public class UserService extends AbstractService<UserJson> {
 	 * @return o usuario
 	 */
 	public User getUserByToken(String token) throws NoResultException {
-		String jpql = ("select u from User u where u.token= :pToken");
-		Query query = entityManager.createQuery(jpql);
-		query.setParameter("pToken", token);
-		User user = (User) query.getSingleResult();
-		return user;
+		try {
+			String jpql = ("select u from User u where u.token= :pToken");
+			Query query = entityManager.createQuery(jpql);
+			query.setParameter("pToken", token);
+			User user = (User) query.getSingleResult();
+			return user;
+		} catch (NoResultException e) {
+			System.out.println("UserService.getUserByToken()");
+			System.err.println("Message line 36: " + e.getMessage());
+			throw new NoResultException("This token was not found");
+		}
+		
 	}
 
 	@Override

@@ -65,7 +65,20 @@ public class AddressJson implements Serializable{
 		this.number = number;
 		this.user = user;
 	}
-
+	
+	public AddressJson(@NotBlank @Size(min = 9, max = 9, message = "cep is not valid") String cep,
+			@Valid String state, @NotBlank String city, @NotBlank String district, @NotBlank String publicPlace,
+			String complement, @NotNull @Min(1) @Max(9999) Integer number, @NotNull Long user) {
+		super();
+		this.cep = cep;
+		this.state = state;
+		this.city = city;
+		this.district = district;
+		this.publicPlace = publicPlace;
+		this.complement = complement;
+		this.number = number;
+		this.user = user;
+	}
 
 	public long getId() {
 		return id;

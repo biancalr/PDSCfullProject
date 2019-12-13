@@ -40,8 +40,9 @@ public abstract class AbstractService<T> {
 	 * 
 	 * @param entity
 	 * @return
+	 * @throws Exception 
 	 */
-	public abstract boolean salvar(T entity);
+	public abstract boolean salvar(T entity) throws Exception;
 	
 	/**
 	 * 

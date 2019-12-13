@@ -24,8 +24,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "address", catalog = "user_ms")
 @Access(AccessType.FIELD)
 @NamedQueries({ @NamedQuery(name = Address.ALL_ADDRESSES, query = "SELECT a FROM Address a"),
-		@NamedQuery(name = Address.ADDRESS_BY_CEP, query = "SELECT a FROM Address a WHERE a.cep = ?1"),
-		@NamedQuery(name = Address.USER_ADDRESS, query = "SELECT a FROM Address a WHERE a.user = ?1") })
+		@NamedQuery(name = Address.ADDRESS_BY_CEP, query = "SELECT a FROM Address a WHERE a.cep = :cep"),
+		@NamedQuery(name = Address.USER_ADDRESS, query = "SELECT a FROM Address a WHERE a.user.id = :userId") })
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -76,6 +76,19 @@ public class Address implements Serializable {
 			String complement, Integer number, User user) {
 		super();
 		this.id = id;
+		this.cep = cep;
+		this.state = state;
+		this.city = city;
+		this.district = district;
+		this.publicPlace = publicPlace;
+		this.complement = complement;
+		this.number = number;
+		this.user = user;
+	}
+
+	public Address(@NotBlank String cep, @NotBlank String state, @NotBlank String city, @NotBlank String district,
+			@NotBlank String publicPlace, String complement, @NotNull Integer number, User user) {
+		super();
 		this.cep = cep;
 		this.state = state;
 		this.city = city;
