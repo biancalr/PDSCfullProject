@@ -16,11 +16,12 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "address", catalog = "address_ms")
+@Table(name = "address", catalog = "user_ms")
 @Access(AccessType.FIELD)
 @NamedQueries({ @NamedQuery(name = Address.ALL_ADDRESSES, query = "SELECT a FROM Address a"),
 		@NamedQuery(name = Address.ADDRESS_BY_CEP, query = "SELECT a FROM Address a WHERE a.cep = ?1"),
@@ -71,7 +72,7 @@ public class Address implements Serializable {
 
 	}
 
-	public Address(long id, String cep, String state, String city, String district, String publicPlace,
+	public Address(long id, String cep,@Valid String state, String city, String district, String publicPlace,
 			String complement, Integer number, User user) {
 		super();
 		this.id = id;

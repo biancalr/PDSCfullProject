@@ -53,6 +53,17 @@ public class CardJson implements Serializable{
 		this.senha = senha;
 	}
 
+	public CardJson(long id, @NotBlank Long user, @NotBlank String bandeira, @NotNull String dataExpiracao,
+			@CreditCardNumber @NotBlank String numero, @NotBlank String senha) {
+		super();
+		this.id = id;
+		this.user = user;
+		this.bandeira = bandeira;
+		this.dataExpiracao = dataExpiracao;
+		this.numero = numero;
+		this.senha = senha;
+	}
+
 	public long getId() {
 		return id;
 	}

@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -18,16 +20,21 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
 @Entity
-@Table(name = "card", catalog = "card_ms")
+@Table(name = "card", catalog = "user_ms")
 @Access(AccessType.FIELD)
+@NamedQueries({ @NamedQuery(name = Card.ALL_CARDS, query = "Select c from Card c"),
+		@NamedQuery(name = Card.CARD_BY_USER, query = "Select c from Card c where c.user.id=?1") })
 public class Card implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String ALL_CARDS = "AllCards";
+	public static final String CARD_BY_USER = "CardByUser";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	@NotBlank
 	@Column(name = "bandeira", nullable = false)
 	private String bandeira;
@@ -40,15 +47,40 @@ public class Card implements Serializable {
 	@CreditCardNumber
 	@Column(name = "numero", nullable = false)
 	private String numero;
-	
+
 	@NotBlank
 	@Column(name = "senha", nullable = false)
 	private String senha;
-	
+
 	@NotBlank
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false, orphanRemoval = false)
 	@JoinColumn(name = "id_user", referencedColumnName = "ID", nullable = false)
 	private User user;
+
+
+	public Card() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Card(long id, @NotBlank String bandeira, @NotBlank String dataExpiracao,
+			@NotBlank @CreditCardNumber String numero, @NotBlank String senha, @NotBlank User user) {
+		this.id = id;
+		this.bandeira = bandeira;
+		this.dataExpiracao = dataExpiracao;
+		this.numero = numero;
+		this.senha = senha;
+		this.user = user;
+	}
+
+	public Card(@NotBlank String bandeira, @NotBlank String dataExpiracao, @NotBlank @CreditCardNumber String numero,
+			@NotBlank String senha, @NotBlank User user) {
+		super();
+		this.bandeira = bandeira;
+		this.dataExpiracao = dataExpiracao;
+		this.numero = numero;
+		this.senha = senha;
+		this.user = user;
+	}
 
 	public long getId() {
 		return id;
@@ -95,20 +127,6 @@ public class Card implements Serializable {
 	}
 
 	public void setUser(User user) {
-		this.user = user;
-	}
-	
-	public Card() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public Card(long id, @NotBlank String bandeira, @NotBlank String dataExpiracao,
-			@NotBlank @CreditCardNumber String numero, @NotBlank String senha, @NotBlank User user) {
-		this.id = id;
-		this.bandeira = bandeira;
-		this.dataExpiracao = dataExpiracao;
-		this.numero = numero;
-		this.senha = senha;
 		this.user = user;
 	}
 
